@@ -7,7 +7,7 @@ using UnityEngine.AI;
 public class PlayerMovement : NetworkBehaviour
 {
     [SerializeField] private NavMeshAgent agent;
-    [SerializeField] private NetworkAnimator animator;
+    public NetworkAnimator animator;
 
     private Camera mainCam;
 
@@ -39,7 +39,6 @@ public class PlayerMovement : NetworkBehaviour
             agent.SetDestination(hit.point);
     }
 
-    [Command]
     private void Jump()
     {
         animator.SetTrigger("Jump");

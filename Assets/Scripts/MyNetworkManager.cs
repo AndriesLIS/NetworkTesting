@@ -11,25 +11,23 @@ public class MyNetworkManager : NetworkManager
     public override void OnStartServer()
     {
         base.OnStartServer();
+
+        CharacterFactory.PrefabBase = VisualPrefab;
     }
 
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
     {
-        var tmp = $"Player {numPlayers}";
-
-        CharacterData message = new CharacterData {};
-
-        message.Color = new Color(
+        CharacterData message = new()
+        {
+            Color = new Color(
             Random.Range(0, 1f),
             Random.Range(0, 1f),
-            Random.Range(0, 1f));
+            Random.Range(0, 1f)),
 
-        message.username = tmp;
-        message.networkId = conn.connectionId;
+            username = $"Player {numPlayers}",
+            networkId = conn.connectionId
+        };
 
-        Debug.Log($"{tmp} Joined the Game");
-
-        //THIS SPAWNS THE PLAYER
         OnCreateCharacter(conn, message);
     }
 
@@ -42,14 +40,30 @@ public class MyNetworkManager : NetworkManager
             : Instantiate(playerPrefab);
 
         player.name = $"{playerPrefab.name} [connId={conn.connectionId}]";
-
-        var Visuals = CharacterFactory.CreateCharacter(VisualPrefab, message);
-        Visuals.transform.SetParent(player.transform, false);
-
         NetworkServer.AddPlayerForConnection(conn, player);
-        NetworkServer.Spawn(Visuals);
-        
-        var tmp = player.GetComponent<PlayerDataContainer>();
-        tmp.CrpcSetupClient(message);
+
+        var visuals = CharacterFactory.CreateCharacter(player, message);
+        visuals.transform.SetParent(player.transform, false);
+
+        var playerDataContainer = player.GetComponent<PlayerDataContainer>();
+
+        NetworkServer.Spawn(visuals, playerDataContainer.connectionToClient);
+        playerDataContainer.CrpcSetupClient(visuals, message);
+    }
+
+    public override void OnServerDisconnect(NetworkConnectionToClient conn)
+    {
+        base.OnServerDisconnect(conn);
+
+        int i = 0;
+        foreach (var item in NetworkServer.spawned.Values)
+        {
+            var tmp = item.gameObject.GetComponent<PlayerDataContainer>();
+
+            if (tmp)
+                tmp.UpdateUsername($"Player {i}");
+
+            i++;
+        }
     }
 }

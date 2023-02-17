@@ -3,32 +3,67 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using Mirror;
-using TMPro;
 
 public class PlayerDataContainer : NetworkBehaviour
 {
     #region Vars
     [SyncVar(hook = nameof(HandleCharacterDataChange))]
     private CharacterData data;
+    [SyncVar(hook = nameof(HandleVisualsChange))]
+    private GameObject visuals;
+    [SyncVar(hook = nameof(HandleVisualsIDChange))]
+    private uint visualsNetworkId;
     #endregion
+
 
     #region Server
-
-    #endregion
-
-    #region Client
     [Server]
-    public void CrpcSetupClient(CharacterData message)
+    public void UpdateUsername(string message)
     {
-        data = message;
+        var tmp = data;
+
+        tmp.username = message;
+
+        data = tmp;
     }
 
+    [Server]
+    public void CrpcSetupClient(GameObject visuals, CharacterData message)
+    {
+        this.visuals = visuals;
+        visualsNetworkId = visuals.GetComponent<NetworkIdentity>().netId;
+        data = message;
+    }
+    #endregion
+
+
+    #region Client
     public void HandleCharacterDataChange(CharacterData _, CharacterData newData)
     {
-        Debug.Log($"{netId} | {newData}");
         data = newData;
+        StartCoroutine(UpdateVisualsForAllClients());
+    }
+    public void HandleVisualsChange(GameObject _, GameObject newData)
+    {
+        visuals = newData;
+    }
+    public void HandleVisualsIDChange(uint _, uint newData)
+    {
+        visualsNetworkId = newData;
+    }
 
-        Debug.Log("1");
+    public IEnumerator UpdateVisualsForAllClients()
+    {
+        while (visuals == null)
+        {
+            yield return null;
+
+            if (NetworkClient.spawned.TryGetValue(visualsNetworkId, out NetworkIdentity identity))
+                visuals = identity.gameObject;
+        }
+
+        CharacterFactory.UpdateCharacter(gameObject, visuals, data);
+        visuals.transform.SetParent(transform, false);
     }
     #endregion
 }
