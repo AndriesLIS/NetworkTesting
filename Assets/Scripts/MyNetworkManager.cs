@@ -7,6 +7,7 @@ public class MyNetworkManager : NetworkManager
 {
     [SerializeField] private PlayerData playerData;
     [SerializeField] private GameObject VisualPrefab;
+    [SerializeField] private PlayerDataContainer myPlayer = default;
 
     public override void OnStartServer()
     {
@@ -24,31 +25,28 @@ public class MyNetworkManager : NetworkManager
             Random.Range(0, 1f),
             Random.Range(0, 1f)),
 
-            username = $"Player {numPlayers}",
-            networkId = conn.connectionId
+            username = $"Player {numPlayers}"
         };
 
-        OnCreateCharacter(conn, message);
+        CreateCharacter(conn, message);
     }
 
     [Server]
-    public void OnCreateCharacter(NetworkConnectionToClient conn, CharacterData message)
+    public void CreateCharacter(NetworkConnectionToClient conn, CharacterData message)
     {
         Transform startPos = GetStartPosition();
-        GameObject player = startPos != null
-            ? Instantiate(playerPrefab, startPos.position, startPos.rotation)
-            : Instantiate(playerPrefab);
+        PlayerDataContainer player = startPos != null
+            ? Instantiate(myPlayer, startPos.position, startPos.rotation)
+            : Instantiate(myPlayer);
 
         player.name = $"{playerPrefab.name} [connId={conn.connectionId}]";
-        NetworkServer.AddPlayerForConnection(conn, player);
+        NetworkServer.AddPlayerForConnection(conn, player.gameObject);
 
-        var visuals = CharacterFactory.CreateCharacter(player, message);
+        var visuals = CharacterFactory.CreateCharacter(player.gameObject, message);
         visuals.transform.SetParent(player.transform, false);
 
-        var playerDataContainer = player.GetComponent<PlayerDataContainer>();
-
-        NetworkServer.Spawn(visuals, playerDataContainer.connectionToClient);
-        playerDataContainer.CrpcSetupClient(visuals, message);
+        NetworkServer.Spawn(visuals, player.connectionToClient);
+        player.CrpcSetupClient(visuals, message);
     }
 
     public override void OnServerDisconnect(NetworkConnectionToClient conn)

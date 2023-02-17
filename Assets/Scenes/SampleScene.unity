@@ -407,6 +407,7 @@ MonoBehaviour:
   - {fileID: 5350516521656413848, guid: 01da5eac340546d4494acdcb59d5b683, type: 3}
   timeInterpolationGui: 0
   VisualPrefab: {fileID: 5350516521656413848, guid: 01da5eac340546d4494acdcb59d5b683, type: 3}
+  myPlayer: {fileID: 4267948044569599008, guid: 814039875c6d8c548936f7f8f5a51a29, type: 3}
 --- !u!1 &840790881
 GameObject:
   m_ObjectHideFlags: 0

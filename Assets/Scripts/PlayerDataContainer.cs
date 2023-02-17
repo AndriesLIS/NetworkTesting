@@ -9,12 +9,11 @@ public class PlayerDataContainer : NetworkBehaviour
     #region Vars
     [SyncVar(hook = nameof(HandleCharacterDataChange))]
     private CharacterData data;
-    [SyncVar(hook = nameof(HandleVisualsChange))]
-    private GameObject visuals;
     [SyncVar(hook = nameof(HandleVisualsIDChange))]
     private uint visualsNetworkId;
+    
+    private GameObject visuals;
     #endregion
-
 
     #region Server
     [Server]
@@ -36,21 +35,19 @@ public class PlayerDataContainer : NetworkBehaviour
     }
     #endregion
 
-
     #region Client
+
+    #region Hooks
     public void HandleCharacterDataChange(CharacterData _, CharacterData newData)
     {
         data = newData;
         StartCoroutine(UpdateVisualsForAllClients());
     }
-    public void HandleVisualsChange(GameObject _, GameObject newData)
-    {
-        visuals = newData;
-    }
     public void HandleVisualsIDChange(uint _, uint newData)
     {
         visualsNetworkId = newData;
     }
+    #endregion
 
     public IEnumerator UpdateVisualsForAllClients()
     {

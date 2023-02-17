@@ -39,6 +39,7 @@ public class PlayerMovement : NetworkBehaviour
             agent.SetDestination(hit.point);
     }
 
+    [Client]
     private void Jump()
     {
         animator.SetTrigger("Jump");
