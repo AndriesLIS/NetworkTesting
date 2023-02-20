@@ -6,7 +6,8 @@ using UnityEngine;
 
 public class PlayerReferenceHolder : MonoBehaviour
 {
-    public NetworkAnimator animator;
+    public AnimationManager animationManager;
+    public Animator animator;
     public TMP_Text usernameText;
     public Renderer Sphere;
 }

@@ -11,16 +11,15 @@ public static class CharacterFactory
 
     public static GameObject CreateCharacter(GameObject player, CharacterData data)
     {
-        Debug.Log(PrefabBase);
-
         var tmp = Object.Instantiate(PrefabBase);
 
         var references = tmp.GetComponent<PlayerReferenceHolder>();
         references.Sphere.material.color = data.Color;
         references.usernameText.text = data.username;
 
-        var animator = tmp.GetComponent<NetworkAnimator>();
-        player.GetComponent<PlayerMovement>().animator = animator;
+        var playerMovement = player.GetComponent<PlayerMovement>();
+        playerMovement.animationM = references.animationManager;
+        playerMovement.animator = references.animator;
 
         tmp.transform.SetParent(player.transform, false);
 
@@ -33,7 +32,8 @@ public static class CharacterFactory
         references.Sphere.material.color = data.Color;
         references.usernameText.text = data.username;
 
-        var animator = visuals.GetComponent<NetworkAnimator>();
-        player.GetComponent<PlayerMovement>().animator = animator;
+        var playerMovement = player.GetComponent<PlayerMovement>();
+        playerMovement.animationM = references.animationManager;
+        playerMovement.animator = references.animator;
     }
 }

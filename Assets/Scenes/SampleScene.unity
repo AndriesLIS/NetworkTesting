@@ -404,9 +404,9 @@ MonoBehaviour:
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs:
-  - {fileID: 5350516521656413848, guid: 01da5eac340546d4494acdcb59d5b683, type: 3}
+  - {fileID: 6229822249029598824, guid: 4b799a1ecbbecef45a8f34ae8e7fe3a4, type: 3}
   timeInterpolationGui: 0
-  VisualPrefab: {fileID: 5350516521656413848, guid: 01da5eac340546d4494acdcb59d5b683, type: 3}
+  VisualPrefab: {fileID: 6229822249029598824, guid: 4b799a1ecbbecef45a8f34ae8e7fe3a4, type: 3}
   myPlayer: {fileID: 4267948044569599008, guid: 814039875c6d8c548936f7f8f5a51a29, type: 3}
 --- !u!1 &840790881
 GameObject:
@@ -644,7 +644,7 @@ GameObject:
   - component: {fileID: 1873085654}
   - component: {fileID: 1873085653}
   - component: {fileID: 1873085652}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
